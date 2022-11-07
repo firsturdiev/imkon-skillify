@@ -1,0 +1,78 @@
+<html>
+
+<head>
+  <title>https://t.me/samsung_tj_tvbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<body>
+  <div id="qr-reader" style="width:100%;"></div>
+  <div id="qr-reader-results"></div>
+</body>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.2.8/html5-qrcode.min.js"
+  integrity="sha512-I5QMoOT/qiDNyWVuBCnZoUsGr4pCCVaqEL3Cf6bQO69zaU7Bm5hoFVrYWF7qwd/obcsUCoAR/HqAUhSUMOo70Q=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  var html5QrcodeScanner;
+  function docReady(fn) {
+    // see if DOM is already available
+    if (document.readyState === "complete"
+      || document.readyState === "interactive") {
+      // call on next available tick
+      setTimeout(fn, 1);
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
+  const urlRegex = /https:\/\/t\.me\/samsungkgbot\?start=(\w+)$/
+
+  let qrboxFunction = function (viewfinderWidth, viewfinderHeight) {
+    let minEdgePercentage = 0.7; // 70%
+    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+    return {
+      width: viewfinderWidth,
+      height: viewfinderHeight
+    };
+  }
+
+  docReady(function () {
+    var resultContainer = document.getElementById('qr-reader-results');
+    var lastResult, countResults = 0;
+    function onScanSuccess(decodedText, decodedResult) {
+      debugger;
+      const dd = urlRegex.exec(decodedText)?.[1] || '0'
+      return window.Telegram.WebApp.sendData(dd);
+      if (decodedText !== lastResult) {
+        ++countResults;
+        lastResult = decodedText;
+        // Handle on success condition with the decoded message.
+        console.log(`Scan result ${decodedText}`, decodedResult);
+
+        const params = new URLSearchParams(location.search)
+
+        console.log(params, "asdasd")
+
+        const [empty, qr, chat_id] = window.location.pathname.split("/")
+
+        console.log(chat_id, "some")
+
+        let b64 = btoa(unescape(encodeURIComponent(decodedText)));
+        $.post(`https://samsungtj.probot.uz/qr/`, {
+          chat_id, serial: decodedText
+        }).then(() => {
+          window.location = "tg://resolve?domain=samsung_tj_tvbot";
+        })
+      }
+    }
+    html5QrcodeScanner = new Html5Qrcode(
+      "qr-reader", { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] });
+    // html5QrcodeScanner.render(onScanSuccess);
+    const config = { fps: 30, qrbox: qrboxFunction };
+    html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess);
+  });
+</script>
+</head>
+
+</html>
