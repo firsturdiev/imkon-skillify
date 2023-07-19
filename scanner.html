@@ -14,7 +14,7 @@
     const urlRegex = /https:\/\/t\.me\/samsungkgbot\?start=(\w+)$/;
     window.Telegram.WebApp.showScanQrPopup({ text: '' }, (data) => {
       const id = urlRegex.exec(data)?.[1] || '0';
-      window.Telegram.WebApp.sendData(data);
+      window.Telegram.WebApp.sendData(id);
       window.Telegram.WebApp.closeScanQrPopup();
       return window.Telegram.WebApp.close();
     });
