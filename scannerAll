@@ -1,0 +1,26 @@
+<html>
+
+<head>
+  <title>QR Code Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+
+<body>
+  <div id="qr-reader" style="width:100%;"></div>
+  <div id="qr-reader-results"></div>
+  <script>
+    const urlRegex = /https:\/\/t\.me\/samsungkgbot\?start=(\w+)$/;
+    window.Telegram.WebApp.showScanQrPopup({ text: '' }, (data) => {
+      window.Telegram.WebApp.sendData(data);
+      window.Telegram.WebApp.closeScanQrPopup();
+      return window.Telegram.WebApp.close();
+    });
+    window.Telegram.WebApp.onEvent('popupClosed', (item) => {
+      return window.Telegram.WebApp.close();
+    });
+  </script>
+</body>
+
+</html>
